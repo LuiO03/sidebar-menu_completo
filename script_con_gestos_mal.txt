@@ -1,0 +1,158 @@
+
+// ========== CONFIGURACIÓN GENERAL ========== //
+document.addEventListener("DOMContentLoaded", () => {
+  registrarEventosSidebarPrincipal();
+  registrarEventosSidebarUsuario();
+  registrarEventosOverlay();
+  registrarGestosSidebars();
+});
+
+// ========== ABRIR/CERRAR SIDE BAR PRINCIPAL ========== //
+function registrarEventosSidebarPrincipal() {
+  const toggleBtn = document.getElementById("toggle-btn");
+  toggleBtn?.addEventListener("click", () => {
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("overlay");
+
+    const abierto = sidebar.classList.toggle("show");
+    overlay.classList.toggle("active", abierto);
+    document.body.classList.toggle("no-scroll", abierto);
+
+    // Restaurar posición visual si es necesario
+    sidebar.style.left = abierto ? "0" : "";
+  });
+}
+
+// ========== ABRIR/CERRAR SIDE BAR USUARIO ========== //
+function registrarEventosSidebarUsuario() {
+  const avatar = document.querySelector(".user-avatar");
+  const configBtn = document.querySelector(".topbar-right .icon-button");
+  const userSidebar = document.getElementById("userSidebar");
+  const overlay = document.getElementById("overlay");
+
+  const toggle = () => {
+    const abierto = userSidebar.classList.toggle("open");
+    overlay.classList.toggle("active", abierto);
+    document.body.classList.toggle("no-scroll", abierto);
+
+    userSidebar.style.right = abierto ? "0" : "";
+  };
+
+  avatar?.addEventListener("click", toggle);
+  configBtn?.addEventListener("click", toggle);
+}
+
+// ========== OVERLAY & ESCAPE KEY ========== //
+function registrarEventosOverlay() {
+  const overlay = document.getElementById("overlay");
+  overlay.addEventListener("click", cerrarSidebars);
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") cerrarSidebars();
+  });
+}
+
+function cerrarSidebars() {
+  const sidebar = document.getElementById("sidebar");
+  const userSidebar = document.getElementById("userSidebar");
+  const overlay = document.getElementById("overlay");
+
+  sidebar.classList.remove("show");
+  userSidebar.classList.remove("open");
+  overlay.classList.remove("active");
+  document.body.classList.remove("no-scroll");
+
+  sidebar.style.left = "";
+  userSidebar.style.right = "";
+  overlay.style.opacity = "";
+}
+
+// ========== GESTOS DESDE BORDES ========== //
+function registrarGestosSidebars() {
+  const sidebar = document.getElementById("sidebar");
+  const userSidebar = document.getElementById("userSidebar");
+  const overlay = document.getElementById("overlay");
+  const maxSidebarWidth = 250;
+  const umbral = 60;
+
+  let startX = null;
+  let currentX = null;
+  let dragging = false;
+  let tipo = null;
+
+  document.body.addEventListener("touchstart", (e) => {
+    if (window.innerWidth > 800 || e.touches.length !== 1) return;
+    startX = e.touches[0].clientX;
+    currentX = startX;
+    dragging = true;
+
+    if (sidebar.classList.contains("show") && startX < maxSidebarWidth) {
+      tipo = "cerrar-left";
+    } else if (userSidebar.classList.contains("open") && startX > window.innerWidth - maxSidebarWidth) {
+      tipo = "cerrar-right";
+    } else if (startX < 30) {
+      tipo = "left";
+    } else if (startX > window.innerWidth - 30) {
+      tipo = "right";
+    } else {
+      tipo = null;
+    }
+  });
+
+  document.body.addEventListener("touchmove", (e) => {
+    if (!dragging || !tipo) return;
+    currentX = e.touches[0].clientX;
+    const deltaX = currentX - startX;
+    const progreso = Math.min(Math.abs(deltaX) / maxSidebarWidth, 1);
+
+    overlay.classList.add("active");
+    overlay.style.opacity = progreso * 0.6;
+
+    if (tipo === "left") {
+      sidebar.style.transition = "none";
+      sidebar.style.left = `${Math.min(-maxSidebarWidth + deltaX, 0)}px`;
+    } else if (tipo === "right") {
+      userSidebar.style.transition = "none";
+      userSidebar.style.right = `${Math.min(-maxSidebarWidth - deltaX, 0)}px`;
+    } else if (tipo === "cerrar-left") {
+      sidebar.style.transition = "none";
+      sidebar.style.left = `${Math.max(0 + deltaX, -maxSidebarWidth)}px`;
+    } else if (tipo === "cerrar-right") {
+      userSidebar.style.transition = "none";
+      userSidebar.style.right = `${Math.max(0 - deltaX, -maxSidebarWidth)}px`;
+    }
+  });
+
+  document.body.addEventListener("touchend", () => {
+    if (!dragging || !tipo) return;
+    const deltaX = currentX - startX;
+    dragging = false;
+
+    sidebar.style.transition = "";
+    userSidebar.style.transition = "";
+    overlay.style.opacity = "";
+
+    if (tipo === "left" && deltaX > umbral) {
+      sidebar.classList.add("show");
+      sidebar.style.left = "0";
+      overlay.classList.add("active");
+      document.body.classList.add("no-scroll");
+    } else if (tipo === "right" && deltaX < -umbral) {
+      userSidebar.classList.add("open");
+      userSidebar.style.right = "0";
+      overlay.classList.add("active");
+      document.body.classList.add("no-scroll");
+    } else if (tipo === "cerrar-left" && deltaX < -umbral) {
+      cerrarSidebars();
+    } else if (tipo === "cerrar-right" && deltaX > umbral) {
+      cerrarSidebars();
+    } else {
+      if (!sidebar.classList.contains("show") && !userSidebar.classList.contains("open")) {
+        overlay.classList.remove("active");
+      }
+      sidebar.style.left = sidebar.classList.contains("show") ? "0" : "";
+      userSidebar.style.right = userSidebar.classList.contains("open") ? "0" : "";
+    }
+
+    tipo = null;
+  });
+}
