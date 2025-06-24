@@ -446,7 +446,6 @@ padding: 12px 14px;
 .overlay {
   position: fixed;
   top: 0;
-  pointer-events: none;
   left: 0;
   width: 100vw;
   height: 100vh;
@@ -454,12 +453,11 @@ padding: 12px 14px;
   opacity: 0;
   transition: opacity 0.3s ease;
   display: none;
-  z-index: 3;
+  z-index: 3; /* Debe estar debajo del user-sidebar (1000) */
 }
 .overlay.active {
   display: block;
   opacity: 1;
-  pointer-events: auto;
 }
 
 /* =========================================

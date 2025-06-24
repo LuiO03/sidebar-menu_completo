@@ -215,68 +215,72 @@ function manejarResponsiveSidebar() {
 // ========== GESTOS TOUCH PARA ABRIR Y CERRAR SIDEBARS ==========
 function registrarGestosSidebars() {
   let touchStartX = 0;
-  let touchMoveX = 0;
-  let tipoSidebar = null; // 'left', 'right' o null
-  const umbral = 50;
+  let touchEndX = 0;
+  const umbral = 50; // Distancia mínima para considerar swipe
   const bordeActivacion = 30;
-  const maxSidebarAncho = 250;
 
   const sidebar = document.getElementById("sidebar");
   const userSidebar = document.getElementById("userSidebar");
   const overlay = document.getElementById("overlay");
 
   document.addEventListener("touchstart", (e) => {
+    // Solo considerar el primer dedo
     if (e.touches.length === 1) {
       touchStartX = e.touches[0].clientX;
-      tipoSidebar = null;
-
-      if (touchStartX < bordeActivacion) {
-        tipoSidebar = 'left';
-      } else if (touchStartX > window.innerWidth - bordeActivacion) {
-        tipoSidebar = 'right';
-      }
     }
   });
 
-  document.addEventListener("touchmove", (e) => {
-    if (!tipoSidebar || e.touches.length !== 1) return;
-    touchMoveX = e.touches[0].clientX;
-
-    let deltaX = touchMoveX - touchStartX;
-    if (tipoSidebar === 'right') deltaX = touchStartX - touchMoveX;
-
-    const progreso = Math.min(Math.max(deltaX / maxSidebarAncho, 0), 1); // 0 a 1
-    overlay.classList.add('active');
-    overlay.style.opacity = progreso * 0.6; // Hasta 0.6 de opacidad
+  document.addEventListener("touchend", (e) => {
+    if (e.changedTouches.length === 1) {
+      touchEndX = e.changedTouches[0].clientX;
+      manejarGesto();
+    }
   });
 
-  document.addEventListener("touchend", (e) => {
-    const touchEndX = e.changedTouches[0].clientX;
+  function manejarGesto() {
+    const esMovil = window.innerWidth <= 800;
+    if (!esMovil) return;
+
     const deltaX = touchEndX - touchStartX;
 
-    overlay.style.opacity = ''; // reset
-
-    if (!tipoSidebar) return;
-
-    if (tipoSidebar === 'left' && deltaX > umbral) {
-      cerrarSidebars();
+    // === ABRIR SIDE BAR IZQUIERDO ===
+    if (touchStartX < bordeActivacion && deltaX > umbral) {
+      cerrarSidebars(); // Asegura que no se superpongan
       sidebar.classList.add("show");
       overlay.classList.add("active");
       document.body.classList.add("no-scroll");
-    } else if (tipoSidebar === 'right' && deltaX < -umbral) {
+    }
+
+    // === ABRIR SIDE BAR DERECHO ===
+    else if (
+      touchStartX > window.innerWidth - bordeActivacion &&
+      deltaX < -umbral
+    ) {
       cerrarSidebars();
       userSidebar.classList.add("open");
       overlay.classList.add("active");
       document.body.classList.add("no-scroll");
-    } else {
-      // No cumplió el umbral → cancelar
-      if (!sidebar.classList.contains("show") && !userSidebar.classList.contains("open")) {
-        overlay.classList.remove("active");
-      }
     }
 
-    tipoSidebar = null;
-  });
+    // === CERRAR SIDE BAR IZQUIERDO ===
+    else if (
+      sidebar.classList.contains("show") &&
+      deltaX < -umbral &&
+      touchStartX < 250
+    ) {
+      cerrarSidebars();
+    }
+
+    // === CERRAR SIDE BAR DERECHO ===
+    else if (
+      userSidebar.classList.contains("open") &&
+      deltaX > umbral &&
+      touchStartX > window.innerWidth - 250
+    ) {
+      cerrarSidebars();
+    }
+  }
 }
+
 
 
