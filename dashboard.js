@@ -1,5 +1,4 @@
-// ========== INICIALIZACIÓN ==========
-
+// ========== INICIALIZACIÓN ========== //
 document.addEventListener("DOMContentLoaded", () => {
   aplicarEstadosIniciales();
   manejarIconosLineFill();
@@ -12,13 +11,12 @@ document.addEventListener("DOMContentLoaded", () => {
   registrarGestosSidebars();
 });
 
-// ========== SUBMENÚ ==========
+// ========== SUBMENÚ ========== //
 function toggleSubMenu(btn) {
   const subMenu = btn.nextElementSibling;
   const isOpen = subMenu.classList.toggle("show");
   btn.classList.toggle("rotate", isOpen);
 
-  // Guardar en localStorage según el botón (usa un identificador único)
   const id = btn.getAttribute("data-id");
   if (id) {
     localStorage.setItem(`submenu-${id}`, isOpen ? "open" : "closed");
@@ -26,21 +24,17 @@ function toggleSubMenu(btn) {
 }
 
 function aplicarSubMenusGuardados() {
-  const botones = document.querySelectorAll(".dropdown-btn");
-
-  botones.forEach((btn) => {
+  document.querySelectorAll(".dropdown-btn").forEach((btn) => {
     const id = btn.getAttribute("data-id");
     const estado = localStorage.getItem(`submenu-${id}`);
-
     if (estado === "open") {
-      const subMenu = btn.nextElementSibling;
-      subMenu.classList.add("show");
+      btn.nextElementSibling.classList.add("show");
       btn.classList.add("rotate");
     }
   });
-} //importante guada data-id al button que tiene sub-menu
+}
 
-// ========== OVERLAY ==========
+// ========== OVERLAY Y ESCAPE ========== //
 function registrarEventosOverlay() {
   const overlay = document.getElementById("overlay");
   overlay.addEventListener("click", cerrarSidebars);
@@ -54,25 +48,17 @@ function cerrarSidebars() {
   const userSidebar = document.getElementById("userSidebar");
   const overlay = document.getElementById("overlay");
 
-  let cerrado = false;
+  sidebar.classList.remove("show");
+  userSidebar.classList.remove("open");
+  overlay.classList.remove("active");
+  document.body.classList.remove("no-scroll");
 
-  if (sidebar.classList.contains("show")) {
-    sidebar.classList.remove("show");
-    cerrado = true;
-  }
-
-  if (userSidebar.classList.contains("open")) {
-    userSidebar.classList.remove("open");
-    cerrado = true;
-  }
-
-  if (cerrado) {
-    overlay.classList.remove("active");
-    document.body.classList.remove("no-scroll"); // Quitar scroll
-  }
+  sidebar.style.left = "";
+  userSidebar.style.right = "";
+  overlay.style.opacity = "";
 }
 
-// ========== SIDEBAR PRINCIPAL ==========
+// ========== SIDEBAR PRINCIPAL ========== //
 function registrarEventosSidebarPrincipal() {
   const toggleBtn = document.getElementById("toggle-btn");
   toggleBtn?.addEventListener("click", () => {
@@ -80,9 +66,10 @@ function registrarEventosSidebarPrincipal() {
     const overlay = document.getElementById("overlay");
 
     if (window.innerWidth <= 800) {
-      const abierto = sidebar.classList.toggle("show"); // <== define aquí
+      const abierto = sidebar.classList.toggle("show");
       overlay.classList.toggle("active", abierto);
       document.body.classList.toggle("no-scroll", abierto);
+      sidebar.style.left = abierto ? "0" : "";
     } else {
       const estaCerrado = sidebar.classList.toggle("close");
       localStorage.setItem("sidebar-estado", estaCerrado ? "close" : "open");
@@ -90,28 +77,27 @@ function registrarEventosSidebarPrincipal() {
   });
 }
 
-// ========== SIDEBAR USUARIO ==========
+// ========== SIDEBAR USUARIO ========== //
 function registrarEventosSidebarUsuario() {
   const avatar = document.querySelector(".user-avatar");
   const configBtn = document.querySelector(".topbar-right .icon-button");
-  const sidebar = document.getElementById("userSidebar");
+  const userSidebar = document.getElementById("userSidebar");
   const overlay = document.getElementById("overlay");
 
   const toggle = () => {
-    const abierto = sidebar.classList.toggle("open");
+    const abierto = userSidebar.classList.toggle("open");
     overlay.classList.toggle("active", abierto);
     document.body.classList.toggle("no-scroll", abierto);
+    userSidebar.style.right = abierto ? "0" : "";
   };
 
   avatar?.addEventListener("click", toggle);
   configBtn?.addEventListener("click", toggle);
 }
 
-// ========== ICONOS LINE A FILL ==========
+// ========== ICONOS LINE A FILL ========== //
 function manejarIconosLineFill() {
-  const iconos = document.querySelectorAll(".icon");
-
-  iconos.forEach((icono) => {
+  document.querySelectorAll(".icon").forEach((icono) => {
     const claseLine = [...icono.classList].find((c) => c.endsWith("-line"));
     if (!claseLine) return;
 
@@ -140,19 +126,16 @@ function manejarIconosLineFill() {
   });
 }
 
-// ========== ESTADO INICIAL ==========
+// ========== ESTADO INICIAL ========== //
 function aplicarEstadosIniciales() {
   const activeItem = document.querySelector("#sidebar li.active");
   if (!activeItem) return;
 
-  const prev = activeItem.previousElementSibling;
-  const next = activeItem.nextElementSibling;
-
-  if (prev) prev.classList.add("before-active");
-  if (next) next.classList.add("after-active");
+  activeItem.previousElementSibling?.classList.add("before-active");
+  activeItem.nextElementSibling?.classList.add("after-active");
 }
 
-// ========== LUCES (TOGGLE) ==========
+// ========== TOGGLE MODO OSCURO ========== //
 function registrarEventoLuces() {
   const footerContent = document.querySelector(".sidebar-footer-content");
   const darkToggle = document.getElementById("darkToggle");
@@ -169,7 +152,6 @@ function registrarEventoLuces() {
 
     const actualizarEstadoLuces = () => {
       const activado = darkToggle.checked;
-
       modoIcono.classList.toggle("ri-lightbulb-line", !activado);
       modoIcono.classList.toggle("ri-lightbulb-fill", activado);
       modoIcono.classList.add("rotar");
@@ -189,7 +171,7 @@ function registrarEventoLuces() {
   }
 }
 
-// ========== RESPONSIVE ==========
+// ========== MODO RESPONSIVE ========== //
 function manejarResponsiveSidebar() {
   const sidebar = document.getElementById("sidebar");
   const userSidebar = document.getElementById("userSidebar");
@@ -197,7 +179,6 @@ function manejarResponsiveSidebar() {
 
   const aplicarModoResponsive = () => {
     const esMovil = window.innerWidth <= 800;
-
     if (esMovil) {
       sidebar.classList.remove("close");
     } else {
@@ -212,75 +193,92 @@ function manejarResponsiveSidebar() {
   window.addEventListener("resize", aplicarModoResponsive);
 }
 
-// ========== GESTOS TOUCH PARA ABRIR Y CERRAR SIDEBARS ==========
+// ========== GESTOS DESDE BORDES ========== //
 function registrarGestosSidebars() {
-  let touchStartX = 0;
-  let touchEndX = 0;
-  const umbral = 50; // Distancia mínima para considerar swipe
-  const bordeActivacion = 30;
-
   const sidebar = document.getElementById("sidebar");
   const userSidebar = document.getElementById("userSidebar");
   const overlay = document.getElementById("overlay");
+  const maxSidebarWidth = 250;
+  const umbral = 60;
 
-  document.addEventListener("touchstart", (e) => {
-    // Solo considerar el primer dedo
-    if (e.touches.length === 1) {
-      touchStartX = e.touches[0].clientX;
+  let startX = null;
+  let currentX = null;
+  let dragging = false;
+  let tipo = null;
+
+  document.body.addEventListener("touchstart", (e) => {
+    if (window.innerWidth > 800 || e.touches.length !== 1) return;
+    startX = e.touches[0].clientX;
+    currentX = startX;
+    dragging = true;
+
+    if (sidebar.classList.contains("show") && startX < maxSidebarWidth) {
+      tipo = "cerrar-left";
+    } else if (userSidebar.classList.contains("open") && startX > window.innerWidth - maxSidebarWidth) {
+      tipo = "cerrar-right";
+    } else if (startX < 30) {
+      tipo = "left";
+    } else if (startX > window.innerWidth - 30) {
+      tipo = "right";
+    } else {
+      tipo = null;
     }
   });
 
-  document.addEventListener("touchend", (e) => {
-    if (e.changedTouches.length === 1) {
-      touchEndX = e.changedTouches[0].clientX;
-      manejarGesto();
+  document.body.addEventListener("touchmove", (e) => {
+    if (!dragging || !tipo) return;
+    currentX = e.touches[0].clientX;
+    const deltaX = currentX - startX;
+    const progreso = Math.min(Math.abs(deltaX) / maxSidebarWidth, 1);
+    overlay.classList.add("active");
+    overlay.style.opacity = progreso * 0.6;
+
+    if (tipo === "left") {
+      sidebar.style.transition = "none";
+      sidebar.style.left = `${Math.min(-maxSidebarWidth + deltaX, 0)}px`;
+    } else if (tipo === "right") {
+      userSidebar.style.transition = "none";
+      userSidebar.style.right = `${Math.min(-maxSidebarWidth - deltaX, 0)}px`;
+    } else if (tipo === "cerrar-left") {
+      sidebar.style.transition = "none";
+      sidebar.style.left = `${Math.max(0 + deltaX, -maxSidebarWidth)}px`;
+    } else if (tipo === "cerrar-right") {
+      userSidebar.style.transition = "none";
+      userSidebar.style.right = `${Math.max(0 - deltaX, -maxSidebarWidth)}px`;
     }
   });
 
-  function manejarGesto() {
-    const esMovil = window.innerWidth <= 800;
-    if (!esMovil) return;
+  document.body.addEventListener("touchend", () => {
+    if (!dragging || !tipo) return;
+    const deltaX = currentX - startX;
+    dragging = false;
 
-    const deltaX = touchEndX - touchStartX;
+    sidebar.style.transition = "";
+    userSidebar.style.transition = "";
+    overlay.style.opacity = "";
 
-    // === ABRIR SIDE BAR IZQUIERDO ===
-    if (touchStartX < bordeActivacion && deltaX > umbral) {
-      cerrarSidebars(); // Asegura que no se superpongan
+    if (tipo === "left" && deltaX > umbral) {
       sidebar.classList.add("show");
+      sidebar.style.left = "0";
       overlay.classList.add("active");
       document.body.classList.add("no-scroll");
-    }
-
-    // === ABRIR SIDE BAR DERECHO ===
-    else if (
-      touchStartX > window.innerWidth - bordeActivacion &&
-      deltaX < -umbral
-    ) {
-      cerrarSidebars();
+    } else if (tipo === "right" && deltaX < -umbral) {
       userSidebar.classList.add("open");
+      userSidebar.style.right = "0";
       overlay.classList.add("active");
       document.body.classList.add("no-scroll");
+    } else if (tipo === "cerrar-left" && deltaX < -umbral) {
+      cerrarSidebars();
+    } else if (tipo === "cerrar-right" && deltaX > umbral) {
+      cerrarSidebars();
+    } else {
+      if (!sidebar.classList.contains("show") && !userSidebar.classList.contains("open")) {
+        overlay.classList.remove("active");
+      }
+      sidebar.style.left = sidebar.classList.contains("show") ? "0" : "";
+      userSidebar.style.right = userSidebar.classList.contains("open") ? "0" : "";
     }
 
-    // === CERRAR SIDE BAR IZQUIERDO ===
-    else if (
-      sidebar.classList.contains("show") &&
-      deltaX < -umbral &&
-      touchStartX < 250
-    ) {
-      cerrarSidebars();
-    }
-
-    // === CERRAR SIDE BAR DERECHO ===
-    else if (
-      userSidebar.classList.contains("open") &&
-      deltaX > umbral &&
-      touchStartX > window.innerWidth - 250
-    ) {
-      cerrarSidebars();
-    }
-  }
+    tipo = null;
+  });
 }
-
-
-
