@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="style.css" />
+    <link href="libs/remix/fonts/remixicon.css" rel="stylesheet" />
+    <script src="dashboard.js" defer></script>
+  </head>
+
+
+  <body>
+    <!-- Sidebar principal -->
+    <nav id="sidebar">
+      <div class="sidebar-header">
+        <img class="sidebar-logo" src="logo.png" alt="logo del proyecto" />
+        <p class="sidebar-logo-texto"><strong>Gecko</strong><span>merce</span></p>
+      </div>
+      <ul class="sidebar-menu">
+        <li>
+          <a href="dashboard.html" data-label="Dashboard">
+            <i class="ri-dashboard-line icon"></i><span>Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <button
+            class="dropdown-btn"
+            onclick="toggleSubMenu(this)"
+            data-label="Crear" data-id="create"
+          >
+            <i class="ri-add-circle-line icon"></i><span>Create</span>
+            <i class="ri-arrow-down-s-line arrow-icon"></i>
+          </button>
+          <ul class="sub-menu">
+            <div>
+              <li>
+                <a href="#" data-label="Folder"
+                  ><i class="ri-folder-line icon"></i> Folder</a
+                >
+              </li>
+              <li>
+                <a href="#" data-label="Document"
+                  ><i class="ri-file-line icon"></i> Document</a
+                >
+              </li>
+              <li>
+                <a href="#" data-label="Project"
+                  ><i class="ri-lightbulb-line icon"></i> Project</a
+                >
+              </li>
+            </div>
+          </ul>
+        </li>
+        <li class="active">
+          <a href="index.html" data-label="Inicio">
+            <i class="ri-home-4-line icon"></i><span>Home</span>
+          </a>
+        </li>
+        <li>
+          <button
+            class="dropdown-btn"
+            onclick="toggleSubMenu(this)"
+            data-label="Listas de tareas" data-id="lists"
+          >
+            <i class="ri-file-list-2-line icon"></i><span>Todo-Lists</span>
+            <i class="ri-arrow-down-s-line arrow-icon"></i>
+          </button>
+          <ul class="sub-menu">
+            <div>
+              <li>
+                <a href="#" data-label="Work"
+                  ><i class="ri-briefcase-line icon"></i> Work</a
+                >
+              </li>
+              <li>
+                <a href="#" data-label="Private"
+                  ><i class="ri-lock-line icon"></i> Private</a
+                >
+              </li>
+              <li>
+                <a href="#" data-label="Coding"
+                  ><i class="ri-code-line icon"></i> Coding</a
+                >
+              </li>
+              <li>
+                <a href="#" data-label="Gardening"
+                  ><i class="ri-plant-line icon"></i> Gardening</a
+                >
+              </li>
+              <li>
+                <a href="#" data-label="School"
+                  ><i class="ri-book-line icon"></i> School</a
+                >
+              </li>
+            </div>
+          </ul>
+        </li>
+        <li>
+          <a href="calendar.html" data-label="Calendario">
+            <i class="ri-calendar-line icon"></i><span>Calendar</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" data-label="Usuarios">
+            <i class="ri-user-line icon"></i><span>Usuarios</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <div href="#" data-label="Prender Luces" class="sidebar-footer-content">
+          <i id="modoIcono" class="ri-lightbulb-line icon icon-animado"></i>
+          <span id="modoTexto" class="sidebar-footer-texto texto-animado"
+            >Prender Luces</span
+          >
+          <label class="dark-toggle-switch">
+            <input type="checkbox" id="darkToggle" />
+            <span class="dark-toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Contenedor principal -->
+    <div class="layout-wrapper">
+      <!-- Topbar -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button id="toggle-btn" onclick="toggleSidebar()">
+            <i class="ri-menu-line"></i>
+          </button>
+        </div>
+        <div class="topbar-center">
+          <span class="current-date">Hoy es lunes, 23 de Junio de 2025</span>
+        </div>
+        <div class="topbar-right">
+          <img
+            src="avatar.jpg"
+            alt="Avatar"
+            class="user-avatar"
+            onclick="toggleUserSidebar()"
+          />
+          <button class="icon-button" onclick="toggleUserSidebar()">
+            <i class="ri-more-2-fill"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- Sidebar del usuario -->
+      <aside class="user-sidebar" id="userSidebar">
+        <div class="user-sidebar-header">
+          <img src="avatar.jpg" alt="Avatar" class="user-avatar-large" />
+
+          <div class="user-info-wrapper">
+            <div class="user-text">
+              <h4 class="user-name">Luis Quispe Osorio</h4>
+              <p class="user-role">Administrador</p>
+            </div>
+            <button class="edit-user-btn" title="Editar perfil">
+              <i class="ri-pencil-fill"></i>
+            </button>
+          </div>
+        </div>
+
+        <ul class="user-sidebar-menu">
+          <li><i class="ri-user-line icon"></i><span>Ver perfil</span></li>
+          <li>
+            <i class="ri-settings-3-line icon"></i><span>Configuración</span>
+          </li>
+          <li>
+            <i class="ri-shut-down-line icon"></i></i><span>Cerrar sesión</span>
+          </li>
+        </ul>
+        <div class="user-sidebar-section">
+          <h4>Notificaciones</h4>
+          <ul class="notifications-list icon">
+            <li>
+              <i class="ri-notification-3-line"></i> Tienes 3 tareas pendientes
+            </li>
+            <li><i class="ri-mail-line"></i> Nuevo mensaje de soporte</li>
+            <li>
+              <i class="ri-calendar-event-line"></i> Reunión hoy a las 3 PM
+            </li>
+          </ul>
+        </div>
+      </aside>
+
+      <!-- Contenido principal -->
+      <main>
+        <h1>Bienvenido al panel</h1>
+        <ul class="notifications-list icon">
+            <li>
+              <i class="ri-notification-3-line"></i> Tienes 3 tareas pendientes
+            </li>
+            <li><i class="ri-mail-line"></i> Nuevo mensaje de soporte</li>
+            <li>
+              <i class="ri-calendar-event-line"></i> Reunión hoy a las 3 PM
+            </li>
+          </ul>
+        <ul class="notifications-list icon">
+            <li>
+              <i class="ri-notification-3-line"></i> Tienes 3 tareas pendientes
+            </li>
+            <li><i class="ri-mail-line"></i> Nuevo mensaje de soporte</li>
+            <li>
+              <i class="ri-calendar-event-line"></i> Reunión hoy a las 3 PM
+            </li>
+          </ul>
+        <ul class="notifications-list icon">
+            <li>
+              <i class="ri-notification-3-line"></i> Tienes 3 tareas pendientes
+            </li>
+            <li><i class="ri-mail-line"></i> Nuevo mensaje de soporte</li>
+            <li>
+              <i class="ri-calendar-event-line"></i> Reunión hoy a las 3 PM
+            </li>
+          </ul>
+        <ul class="notifications-list icon">
+            <li>
+              <i class="ri-notification-3-line"></i> Tienes 3 tareas pendientes
+            </li>
+            <li><i class="ri-mail-line"></i> Nuevo mensaje de soporte</li>
+            <li>
+              <i class="ri-calendar-event-line"></i> Reunión hoy a las 3 PM
+            </li>
+          </ul>
+        <ul class="notifications-list icon">
+            <li>
+              <i class="ri-notification-3-line"></i> Tienes 3 tareas pendientes
+            </li>
+            <li><i class="ri-mail-line"></i> Nuevo mensaje de soporte</li>
+            <li>
+              <i class="ri-calendar-event-line"></i> Reunión hoy a las 3 PM
+            </li>
+          </ul>
+        <ul class="notifications-list icon">
+            <li>
+              <i class="ri-notification-3-line"></i> Tienes 3 tareas pendientes
+            </li>
+            <li><i class="ri-mail-line"></i> Nuevo mensaje de soporte</li>
+            <li>
+              <i class="ri-calendar-event-line"></i> Reunión hoy a las 3 PM
+            </li>
+          </ul>
+        <ul class="notifications-list icon">
+            <li>
+              <i class="ri-notification-3-line"></i> Tienes 3 tareas pendientes
+            </li>
+            <li><i class="ri-mail-line"></i> Nuevo mensaje de soporte</li>
+            <li>
+              <i class="ri-calendar-event-line"></i> Reunión hoy a las 3 PM
+            </li>
+          </ul>
+        <ul class="notifications-list icon">
+            <li>
+              <i class="ri-notification-3-line"></i> Tienes 3 tareas pendientes
+            </li>
+            <li><i class="ri-mail-line"></i> Nuevo mensaje de soporte</li>
+            <li>
+              <i class="ri-calendar-event-line"></i> Reunión hoy a las 3 PM
+            </li>
+          </ul>
+        <ul class="notifications-list icon">
+            <li>
+              <i class="ri-notification-3-line"></i> Tienes 3 tareas pendientes
+            </li>
+            <li><i class="ri-mail-line"></i> Nuevo mensaje de soporte</li>
+            <li>
+              <i class="ri-calendar-event-line"></i> Reunión hoy a las 3 PM
+            </li>
+          </ul>
+        <ul class="notifications-list icon">
+            <li>
+              <i class="ri-notification-3-line"></i> Tienes 3 tareas pendientes
+            </li>
+            <li><i class="ri-mail-line"></i> Nuevo mensaje de soporte</li>
+            <li>
+              <i class="ri-calendar-event-line"></i> Reunión hoy a las 3 PM
+            </li>
+          </ul>
+      </main>
+    </div>
+
+    <!-- Overlay reutilizable -->
+    <div class="overlay" id="overlay" onclick="handleOverlayClick()"></div>
+  </body>
+</html>
