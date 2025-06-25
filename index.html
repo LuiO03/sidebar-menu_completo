@@ -11,8 +11,6 @@
 
 
   <body>
-    <!-- Área táctil invisible y fija para-->
-    
     <!-- Sidebar principal -->
     <nav id="sidebar">
       <div class="sidebar-header">
@@ -129,8 +127,8 @@
       <!-- Topbar -->
       <header class="topbar">
         <div class="topbar-left">
-          <button id="toggle-btn" onclick="toggleSidebar()">
-            <i class="ri-menu-line"></i>
+          <button id="toggle-btn">
+            <i id="toggle-icon" class="ri-arrow-left-double-fill"></i>
           </button>
         </div>
         <div class="topbar-center">
@@ -141,10 +139,9 @@
             src="avatar.jpg"
             alt="Avatar"
             class="user-avatar"
-            onclick="toggleUserSidebar()"
           />
-          <button class="icon-button" onclick="toggleUserSidebar()">
-            <i class="ri-more-2-fill"></i>
+          <button class="icon-button"">
+            <i class="ri-menu-5-line"></i>
           </button>
         </div>
       </header>
@@ -196,6 +193,6 @@
     </div>
 
     <!-- Overlay reutilizable -->
-    <div class="overlay" id="overlay" onclick="handleOverlayClick()"></div>
+    <div class="overlay" id="overlay"></div>
   </body>
 </html>

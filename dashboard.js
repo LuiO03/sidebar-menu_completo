@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
   manejarResponsiveSidebar();
   aplicarSubMenusGuardados();
   registrarGestosSidebars();
+  actualizarIconoToggleSidebar();
 });
 
 // ========== SUBMENÚ ========== //
@@ -61,20 +62,57 @@ function cerrarSidebars() {
 // ========== SIDEBAR PRINCIPAL ========== //
 function registrarEventosSidebarPrincipal() {
   const toggleBtn = document.getElementById("toggle-btn");
+  const toggleIcon = document.getElementById("toggle-icon");
+
   toggleBtn?.addEventListener("click", () => {
     const sidebar = document.getElementById("sidebar");
     const overlay = document.getElementById("overlay");
 
     if (window.innerWidth <= 800) {
+      const userSidebar = document.getElementById("userSidebar");
+      userSidebar.classList.remove("open");
+      userSidebar.style.right = "";
+
       const abierto = sidebar.classList.toggle("show");
       overlay.classList.toggle("active", abierto);
       document.body.classList.toggle("no-scroll", abierto);
       sidebar.style.left = abierto ? "0" : "";
+
+      // Siempre mostrar flecha a la derecha en modo móvil
+      if (toggleIcon) {
+        toggleIcon.className = "ri-arrow-right-double-fill";
+      }
     } else {
       const estaCerrado = sidebar.classList.toggle("close");
       localStorage.setItem("sidebar-estado", estaCerrado ? "close" : "open");
+
+      // Cambiar ícono según estado solo en escritorio
+      if (toggleIcon) {
+        toggleIcon.className = estaCerrado
+          ? "ri-arrow-right-double-fill"
+          : "ri-arrow-left-double-fill";
+      }
     }
+    actualizarIconoToggleSidebar(); // 🔁 icono después de cada clic
   });
+}
+
+function actualizarIconoToggleSidebar() {
+  const sidebar = document.getElementById("sidebar");
+  const toggleIcon = document.getElementById("toggle-icon");
+
+  if (!toggleIcon) return;
+
+  if (window.innerWidth <= 800) {
+    // Siempre a la derecha en móvil
+    toggleIcon.className = "ri-arrow-right-double-fill";
+  } else {
+    // En escritorio, depende de si el sidebar está cerrado
+    const estaCerrado = sidebar.classList.contains("close");
+    toggleIcon.className = estaCerrado
+      ? "ri-arrow-right-double-fill"
+      : "ri-arrow-left-double-fill";
+  }
 }
 
 // ========== SIDEBAR USUARIO ========== //
@@ -85,6 +123,10 @@ function registrarEventosSidebarUsuario() {
   const overlay = document.getElementById("overlay");
 
   const toggle = () => {
+    const sidebar = document.getElementById("sidebar");
+    sidebar.classList.remove("show");
+    sidebar.style.left = "";
+
     const abierto = userSidebar.classList.toggle("open");
     overlay.classList.toggle("active", abierto);
     document.body.classList.toggle("no-scroll", abierto);
@@ -190,7 +232,10 @@ function manejarResponsiveSidebar() {
   };
 
   aplicarModoResponsive();
-  window.addEventListener("resize", aplicarModoResponsive);
+  window.addEventListener("resize", () => {
+    aplicarModoResponsive();
+    actualizarIconoToggleSidebar(); // 🔁 icono al cambiar tamaño
+  });
 }
 
 // ========== GESTOS DESDE BORDES ========== //
@@ -277,11 +322,19 @@ function registrarGestosSidebars() {
     overlay.style.opacity = "";
 
     if (tipo === "left" && deltaX > umbral) {
+      // Cerrar userSidebar si está abierto
+      userSidebar.classList.remove("open");
+      userSidebar.style.right = "";
+
       sidebar.classList.add("show");
       sidebar.style.left = "0";
       overlay.classList.add("active");
       document.body.classList.add("no-scroll");
     } else if (tipo === "right" && deltaX < -umbral) {
+      // Cerrar sidebar si está abierto
+      sidebar.classList.remove("show");
+      sidebar.style.left = "";
+
       userSidebar.classList.add("open");
       userSidebar.style.right = "0";
       overlay.classList.add("active");

@@ -43,7 +43,7 @@ body.no-scroll {
 #sidebar {
   height: 100vh;
   width: 250px;
-  background-color: var(--base-clr);
+  background-color: var(--sidebar);
   position: sticky;
   top: 0;
   align-self: start;
@@ -51,11 +51,11 @@ body.no-scroll {
   flex-direction: column;
   text-wrap: nowrap;
   transition: width 300ms ease-in-out;
-  background-color: var(--sidebar);
 }
+
 #sidebar.close {
-  padding: 0;
   width: 60px;
+  padding: 0;
 }
 
 .sidebar-header {
@@ -80,24 +80,273 @@ body.no-scroll {
 .sidebar-footer .sidebar-footer-content {
   display: flex;
   align-items: center;
-  gap: 0.5em;
-  width: 100%;
   justify-content: space-between;
+  gap: 0.5em;
   padding: 0.85em;
   border-radius: 8px;
   transition: background-color 0.3s;
   cursor: pointer;
 }
 
-.sidebar-footer-texto {
-  width: 60%;
-}
-
 .sidebar-footer-content:hover {
   background-color: var(--hover-clr);
 }
 
-/* TOGGLE PERSONALIZADO PARA MODO OSCURO */
+.sidebar-footer-texto {
+  width: 60%;
+}
+
+.sidebar-header .sidebar-logo {
+  width: 30px;
+  object-fit: 1/1;
+}
+
+.sidebar-header .sidebar-logo-texto {
+  opacity: 1;
+  visibility: visible;
+  font-size: 20px;
+  text-transform: uppercase;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+#sidebar.close .sidebar-logo {
+  margin: 0 auto;
+}
+
+#sidebar.close .sidebar-logo-texto {
+  opacity: 0;
+  visibility: hidden;
+}
+
+#sidebar.close .sidebar-footer .sidebar-footer-content .sidebar-footer-texto,
+#sidebar.close .sidebar-footer .sidebar-footer-content i {
+  display: none;
+}
+
+/* =========================================
+   TOOLTIPS EN SIDEBAR CERRADO
+========================================= */
+#sidebar.close li a:hover::after,
+#sidebar.close li button:hover::after,
+#sidebar.close .sidebar-footer div:hover::after {
+  content: attr(data-label);
+  position: fixed;
+  left: 60px;
+  background-color: var(--hover-clr);
+  color: var(--text-clr);
+  padding: 6px 10px;
+  white-space: nowrap;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  z-index: 9999;
+  pointer-events: none;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  animation: fadeIn 0.2s forwards;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+/* =========================================
+   MENÚ PRINCIPAL
+========================================= */
+#sidebar .sidebar-menu {
+  list-style: none;
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 100%;
+}
+
+.sidebar-menu::-webkit-scrollbar {
+  width: 5px;
+}
+
+.sidebar-menu::-webkit-scrollbar-thumb {
+  background-color: var(--line-clr);
+  border-radius: 4px;
+}
+
+#sidebar li {
+  position: relative;
+  background-color: var(--sidebar);
+}
+
+#sidebar a,
+#sidebar .dropdown-btn {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  padding: 0.85em 18px;
+  border-radius: 0.5em;
+  text-decoration: none;
+  color: var(--text-clr);
+}
+
+#sidebar .dropdown-btn {
+  width: 100%;
+  background: none;
+  border: none;
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+#sidebar i {
+  font-size: 20px;
+  color: var(--text-clr);
+  flex-shrink: 0;
+}
+
+#sidebar a span,
+#sidebar .dropdown-btn span {
+  flex-grow: 1;
+}
+
+#sidebar.close li a span,
+#sidebar.close button span {
+  opacity: 0;
+  visibility: hidden;
+  width: 0;
+  overflow: hidden;
+  display: inline-block;
+  transition: opacity 0.3s ease, visibility 0.3s ease, width 0.3s ease;
+}
+
+#sidebar li a span,
+#sidebar button span {
+  opacity: 1;
+  visibility: visible;
+  width: auto;
+  transition: opacity 0.3s ease, visibility 0.3s ease, width 0.3s ease;
+}
+
+/* =========================================
+   SUBMENÚ
+========================================= */
+#sidebar .sub-menu {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.4s ease;
+}
+
+#sidebar .sub-menu > div {
+  overflow: hidden;
+}
+
+#sidebar .sub-menu div li,
+#sidebar .sub-menu div li a {
+  background-color: var(--base-clr);
+  border-radius: 6px;
+}
+
+#sidebar .sub-menu.show {
+  grid-template-rows: 1fr;
+}
+
+#sidebar .sub-menu a {
+  padding-left: 2em;
+}
+
+#sidebar.close .sub-menu a {
+  padding: 15px 18px;
+}
+
+#sidebar.close .sub-menu a i {
+  padding-right: 5px;
+}
+
+/* =========================================
+   ESTADO ACTIVE Y VECINOS
+========================================= */
+#sidebar li.active {
+  background-color: var(--base-clr);
+  border-radius: 60px 0 0 60px;
+}
+
+#sidebar li.active a {
+  background-color: var(--sidebar);
+  border: 5px solid var(--base-clr);
+  border-radius: 60px;
+}
+
+#sidebar li.active a:hover {
+  background-color: var(--hover-clr);
+}
+
+#sidebar li.active a,
+#sidebar li.active i {
+  color: var(--accent-clr);
+}
+
+#sidebar.close li.active a {
+  padding: 12px 14px;
+}
+
+#sidebar li.before-active,
+#sidebar li.after-active {
+  background-color: var(--base-clr);
+  overflow: hidden;
+}
+
+#sidebar li.before-active a,
+#sidebar li.before-active .dropdown-btn {
+  background-color: var(--sidebar);
+  border-radius: 0 0 20px 0;
+}
+
+#sidebar li.after-active a,
+#sidebar li.after-active .dropdown-btn {
+  background-color: var(--sidebar);
+  border-radius: 0 20px 0 0;
+}
+
+/* =========================================
+   EFECTOS HOVER
+========================================= */
+#sidebar a:hover,
+#sidebar li.before-active a:hover,
+#sidebar li.after-active a:hover,
+#sidebar li.before-active .dropdown-btn:hover,
+#sidebar li.after-active .dropdown-btn:hover {
+  background-color: var(--hover-clr);
+}
+
+/* =========================================
+   ICONOS Y ANIMACIONES
+========================================= */
+.icon-animado {
+  transition: transform 0.4s ease;
+}
+
+.icon-animado.rotar {
+  transform: rotate(30deg);
+}
+
+.texto-animado {
+  display: inline-block;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.texto-animado.cambiando {
+  opacity: 0;
+}
+
+.arrow-icon {
+  transition: transform 0.3s ease;
+}
+
+.rotate .arrow-icon {
+  transform: rotate(180deg);
+}
+
+/* =========================================
+   TOGGLE PERSONALIZADO (MODO OSCURO)
+========================================= */
 .dark-toggle-switch {
   position: relative;
   display: inline-block;
@@ -113,7 +362,6 @@ body.no-scroll {
 
 .dark-toggle-slider {
   position: absolute;
-  cursor: pointer;
   top: 0;
   left: 0;
   right: 0;
@@ -147,282 +395,8 @@ body.no-scroll {
   transform: translateX(10px);
 }
 
-/* Rotación suave del icono */
-.icon-animado {
-  transition: transform 0.4s ease;
-}
-
-.icon-animado.rotar {
-  transform: rotate(30deg);
-}
-
-/* Transición suave para el texto */
-.texto-animado {
-  display: inline-block;
-  opacity: 1;
-  transition: opacity 0.3s ease;
-}
-
-.texto-animado.cambiando {
-  opacity: 0;
-}
-
-.sidebar-header .sidebar-logo {
-  width: 30px;
-  object-fit: 1/1;
-}
-
-.sidebar-header .sidebar-logo-texto {
-  opacity: 1;
-  visibility: visible;
-  font-size: 20px;
-  text-transform: uppercase;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
-}
-
-/* SIDEBAR CERRADO */
-#sidebar.close {
-  padding: 0;
-  width: 60px;
-}
-
-#sidebar.close .sidebar-logo {
-  margin: 0 auto;
-}
-
-#sidebar.close .sidebar-logo-texto {
-  opacity: 0;
-  visibility: hidden;
-}
-
-#sidebar.close li {
-  position: relative;
-}
-
-#sidebar li a::after {
-  z-index: 9;
-}
-
-#sidebar.close li a:hover::after,
-#sidebar.close li a:hover::after,
-#sidebar.close li button:hover::after,
-#sidebar.close .sidebar-footer div:hover::after {
-  content: attr(data-label);
-  position: fixed; /* en lugar de absolute */
-  left: 60px; /* o más, según el ancho de tu sidebar cerrado */
-  top: auto;
-  transform: translateY(0%);
-  background-color: var(--hover-clr);
-  color: var(--text-clr);
-  padding: 6px 10px;
-  white-space: nowrap;
-  border-radius: 6px;
-  margin-left: 5px;
-  font-size: 0.85rem;
-  z-index: 9999;
-  pointer-events: none;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-  opacity: 0;
-  animation: fadeIn 0.2s forwards;
-}
-
-@keyframes fadeIn {
-  to {
-    opacity: 1;
-  }
-}
-
-#sidebar.close li a span,
-#sidebar.close button span {
-  opacity: 0;
-  visibility: hidden;
-  width: 0;
-  overflow: hidden;
-  display: inline-block;
-  transition: opacity 0.3s ease, visibility 0.3s ease, width 0.3s ease;
-}
-
-#sidebar.close .sidebar-footer .sidebar-footer-content .sidebar-footer-texto,
-#sidebar.close .sidebar-footer .sidebar-footer-content i {
-  display: none;
-}
-
-#sidebar li a span,
-#sidebar button span {
-  opacity: 1;
-  visibility: visible;
-  width: auto;
-  transition: opacity 0.3s ease, visibility 0.3s ease, width 0.3s ease;
-}
-
 /* =========================================
-   MENÚ PRINCIPAL
-========================================= */
-#sidebar .sidebar-menu {
-  list-style: none;
-  overflow-y: auto;
-  overflow-x: hidden;
-  height: 100%;
-}
-
-.sidebar-menu::-webkit-scrollbar {
-  width: 5px;
-}
-.sidebar-menu::-webkit-scrollbar-thumb {
-  background-color: var(--line-clr);
-  border-radius: 4px;
-}
-
-#sidebar li {
-  background-color: var(--sidebar);
-  position: relative;
-}
-
-/* =========================================
-   ENLACES Y BOTONES
-========================================= */
-#sidebar a,
-#sidebar .dropdown-btn {
-  display: flex;
-  align-items: center;
-  gap: 1em;
-  padding: 0.85em 18px;
-  border-radius: 0.5em;
-  text-decoration: none;
-  color: var(--text-clr);
-}
-
-#sidebar .dropdown-btn {
-  width: 100%;
-  background: none;
-  border: none;
-  font: inherit;
-  cursor: pointer;
-  text-align: left;
-}
-
-#sidebar a span,
-#sidebar .dropdown-btn span {
-  flex-grow: 1;
-}
-
-/* =========================================
-   ICONOS
-========================================= */
-#sidebar i {
-  font-size: 20px;
-  color: var(--text-clr);
-  flex-shrink: 0;
-}
-
-/* =========================================
-   ACTIVE Y VECINOS
-========================================= */
-#sidebar li.active {
-  background-color: var(--base-clr);
-  border-radius: 60px 0px 0px 60px;
-}
-
-#sidebar li.active a {
-  border: 5px solid var(--base-clr);
-  border-radius: 60px;
-  background-color: var(--sidebar);
-  
-}
-
-#sidebar.close li.active a{
-padding: 12px 14px;
-}
-
-#sidebar li.active a:hover {
-  background-color: var(--hover-clr);
-}
-
-#sidebar li.active a,
-#sidebar li.active i {
-  color: var(--accent-clr);
-}
-
-/* Justo antes y después */
-#sidebar li.before-active,
-#sidebar li.after-active {
-  background-color: var(--base-clr);
-  overflow: hidden;
-}
-
-#sidebar li.before-active a,
-#sidebar li.before-active button,
-#sidebar li.before-active .dropdown-btn {
-  background-color: var(--sidebar);
-  border-radius: 0 0 20px 0;
-}
-
-#sidebar li.after-active a,
-#sidebar li.after-active button,
-#sidebar li.after-active .dropdown-btn {
-  background-color: var(--sidebar);
-  border-radius: 0 20px 0 0;
-}
-
-/* =========================================
-   EFECTOS HOVER
-========================================= */
-#sidebar a:hover,
-#sidebar li.after-active a:hover,
-#sidebar li.before-active a:hover,
-#sidebar li.after-active .dropdown-btn:hover,
-#sidebar li.before-active .dropdown-btn:hover {
-  background-color: var(--hover-clr);
-}
-
-/* =========================================
-   SUBMENÚ
-========================================= */
-#sidebar .sub-menu {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 0.4s ease;
-}
-
-#sidebar .sub-menu > div {
-  overflow: hidden;
-}
-
-#sidebar .sub-menu div li,
-#sidebar .sub-menu div li a {
-  background-color: var(--base-clr);
-  border-radius: 6px;
-}
-
-#sidebar .sub-menu.show {
-  grid-template-rows: 1fr;
-}
-
-#sidebar .sub-menu a {
-  padding-left: 2em;
-}
-
-#sidebar.close .sub-menu a{
-  padding: 15px 18px;
-}
-
-#sidebar.close .sub-menu a i{
-  padding-right: 5px;
-}
-
-/* =========================================
-   ROTACIÓN DE FLECHA
-========================================= */
-.arrow-icon {
-  transition: transform 0.3s ease;
-}
-
-.rotate .arrow-icon {
-  transform: rotate(180deg);
-}
-
-/* =========================================
-   BOTÓN TOGGLE
+   BOTONES E ÍCONOS
 ========================================= */
 #toggle-btn,
 .icon-button {
@@ -431,7 +405,7 @@ padding: 12px 14px;
   color: var(--text-clr);
   font-size: 1.5rem;
   cursor: pointer;
-  padding: 0.5em;
+  padding: 0.3em;
   border-radius: 0.5em;
   transition: background-color 0.3s ease;
 }
@@ -440,8 +414,9 @@ padding: 12px 14px;
 .icon-button:hover {
   background-color: var(--hover-clr);
 }
+
 /* =========================================
-   OVERLAY GLOBAL
+   OVERLAY
 ========================================= */
 .overlay {
   position: fixed;
@@ -453,8 +428,9 @@ padding: 12px 14px;
   opacity: 0;
   transition: opacity 0.3s ease;
   display: none;
-  z-index: 3; /* Debe estar debajo del user-sidebar (1000) */
+  z-index: 3;
 }
+
 .overlay.active {
   display: block;
   opacity: 1;
@@ -472,7 +448,7 @@ padding: 12px 14px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0px 20px;
+  padding: 0 20px;
   height: 60px;
   background-color: var(--sidebar);
 }
@@ -482,7 +458,12 @@ padding: 12px 14px;
 .topbar-right {
   display: flex;
   align-items: center;
-  gap: 0.5em;
+  gap: 0.2em;
+}
+
+.topbar-right img {
+  width: 35px;
+  border-radius: 60px;
 }
 
 .topbar-center {
@@ -491,52 +472,24 @@ padding: 12px 14px;
   font-weight: 500;
 }
 
-.user-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.user-avatar {
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.logout-btn {
-  background-color: var(--accent-clr);
-  color: #fff;
-  border: none;
-  padding: 0.5em 1em;
-  border-radius: 0.5em;
-  cursor: pointer;
-}
-
-.logout-btn:hover {
-  background-color: #454aff;
-}
-
 /* =========================================
-   Área táctil invisible y fija para movil
-========================================= */
-
-
-
-/* =========================================
-   CONTENIDO PRINCIPAL
+   MAIN
 ========================================= */
 main {
   padding: 20px;
   width: 100%;
+  height: 100%;
   border-radius: 20px 0 0 20px;
   background-color: var(--base-clr);
-  height: 100%;
 }
 
 main p {
   color: var(--secondary-text-clr);
 }
 
+/* =========================================
+   SIDEBAR DE USUARIO
+========================================= */
 .user-sidebar {
   position: fixed;
   top: 0;
@@ -572,9 +525,9 @@ main p {
   object-fit: cover;
   border-radius: 50%;
   border: 2px solid var(--accent-clr);
+  margin-bottom: 10px;
 }
 
-/* Contenedor que agrupa nombre/rol + botón editar */
 .user-info-wrapper {
   display: flex;
   align-items: center;
@@ -583,29 +536,23 @@ main p {
   gap: 1em;
 }
 
-/* Agrupa nombre y rol */
 .user-text {
   display: flex;
   flex-direction: column;
 }
 
-/* Nombre */
 .user-name {
   font-size: 1.1rem;
   font-weight: 600;
   color: var(--text-clr);
-  margin: 0;
 }
 
-/* Rol */
 .user-role {
   font-size: 0.9rem;
   color: var(--secondary-text-clr);
-  margin: 0;
   font-weight: 0;
 }
 
-/* Botón de editar */
 .edit-user-btn {
   background: none;
   border: none;
@@ -613,8 +560,6 @@ main p {
   font-size: 1.2rem;
   cursor: pointer;
   padding: 0.3em;
-  height: 100%;
-  width: min-content;
   border-radius: 6px;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
@@ -623,21 +568,13 @@ main p {
   background-color: var(--hover-clr);
 }
 
-.user-avatar-large {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-bottom: 10px;
-}
-
 .user-sidebar-menu,
 .notifications-list {
   list-style: none;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 0px;
 }
 
 .user-sidebar-menu li,
@@ -662,18 +599,8 @@ main p {
   color: var(--secondary-text-clr);
 }
 
-.icon-button {
-  background: none;
-  border: none;
-  color: var(--text-clr);
-  font-size: 1.5rem;
-  cursor: pointer;
-}
-
-
-
 /* =========================================
-   RESPONSIVE MÓVIL
+   RESPONSIVE (MÓVIL)
 ========================================= */
 @media (max-width: 800px) {
   body {
@@ -684,10 +611,17 @@ main p {
     position: fixed;
     top: 0;
     left: -260px;
-    height: 100dvh;
-    width: 250px;
     z-index: 1000;
     transition: left 0.3s ease-in-out;
+    border-radius: 0px 10px 10px 0px;
+  }
+
+  #userSidebar {
+    border-radius: 10px 0px 0px 10px;
+  }
+
+  #sidebar.show {
+    left: 0;
   }
 
   #sidebar.close {
@@ -695,35 +629,8 @@ main p {
     padding: 5px 0 !important;
   }
 
-  #sidebar.show {
-    left: 0;
-  }
-
-  .sidebar-header,
-  .sidebar-footer {
-    display: flex;
-  }
-
-  .layout-wrapper {
-    margin-left: 0;
-  }
-
-  #sidebar .sidebar-menu {
-    flex-direction: column;
-    gap: 0;
-  }
-
-  #sidebar ul li span,
-  .dropdown-btn .arrow-icon {
-    display: inline;
-  }
-
-  #sidebar ul li .sub-menu.show {
-    position: static;
-    height: auto;
-    border: none;
-    background-color: var(--base-clr);
-    display: block;
+  .topbar {
+    padding: 0px 5px;
   }
 
   main {
@@ -731,5 +638,14 @@ main p {
     padding: 1em;
     min-height: calc(100dvh - 60px);
     border-radius: 0px;
+  }
+
+  .layout-wrapper {
+    margin-left: 0;
+  }
+
+  .sidebar-header,
+  .sidebar-footer {
+    display: flex;
   }
 }
