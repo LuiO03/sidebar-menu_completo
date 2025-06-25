@@ -614,12 +614,10 @@ main p {
     left: -260px;
     z-index: 10;
     transition: left 0.3s ease-in-out;
-    border-right: 1px solid var(--line-clr);
     width: 260px;
   }
 
   #userSidebar {
-    border-left: 1px solid var(--line-clr);
     width: 260px;
   }
 
