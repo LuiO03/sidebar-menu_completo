@@ -1,5 +1,4 @@
-// ========== INICIALIZACIÓN ==========
-
+// ========== INICIALIZACIÓN ========== //
 document.addEventListener("DOMContentLoaded", () => {
   aplicarEstadosIniciales();
   manejarIconosLineFill();
@@ -8,17 +7,35 @@ document.addEventListener("DOMContentLoaded", () => {
   registrarEventosOverlay();
   registrarEventoLuces();
   manejarResponsiveSidebar();
+  aplicarSubMenusGuardados();
   registrarGestosSidebars();
+  actualizarIconoToggleSidebar();
 });
 
-// ========== SUBMENÚ ==========
+// ========== SUBMENÚ ========== //
 function toggleSubMenu(btn) {
   const subMenu = btn.nextElementSibling;
-  subMenu.classList.toggle("show");
-  btn.classList.toggle("rotate");
+  const isOpen = subMenu.classList.toggle("show");
+  btn.classList.toggle("rotate", isOpen);
+
+  const id = btn.getAttribute("data-id");
+  if (id) {
+    localStorage.setItem(`submenu-${id}`, isOpen ? "open" : "closed");
+  }
 }
 
-// ========== OVERLAY ==========
+function aplicarSubMenusGuardados() {
+  document.querySelectorAll(".dropdown-btn").forEach((btn) => {
+    const id = btn.getAttribute("data-id");
+    const estado = localStorage.getItem(`submenu-${id}`);
+    if (estado === "open") {
+      btn.nextElementSibling.classList.add("show");
+      btn.classList.add("rotate");
+    }
+  });
+}
+
+// ========== OVERLAY Y ESCAPE ========== //
 function registrarEventosOverlay() {
   const overlay = document.getElementById("overlay");
   overlay.addEventListener("click", cerrarSidebars);
@@ -32,60 +49,97 @@ function cerrarSidebars() {
   const userSidebar = document.getElementById("userSidebar");
   const overlay = document.getElementById("overlay");
 
-  let cerrado = false;
+  sidebar.classList.remove("show");
+  userSidebar.classList.remove("open");
+  overlay.classList.remove("active");
+  document.body.classList.remove("no-scroll");
 
-  if (sidebar.classList.contains("show")) {
-    sidebar.classList.remove("show");
-    cerrado = true;
-  }
-
-  if (userSidebar.classList.contains("open")) {
-    userSidebar.classList.remove("open");
-    cerrado = true;
-  }
-
-  if (cerrado) {
-    overlay.classList.remove("active");
-  }
+  sidebar.style.left = "";
+  userSidebar.style.right = "";
+  overlay.style.opacity = "";
 }
 
-// ========== SIDEBAR PRINCIPAL ==========
+// ========== SIDEBAR PRINCIPAL ========== //
 function registrarEventosSidebarPrincipal() {
   const toggleBtn = document.getElementById("toggle-btn");
+  const toggleIcon = document.getElementById("toggle-icon");
+
   toggleBtn?.addEventListener("click", () => {
     const sidebar = document.getElementById("sidebar");
     const overlay = document.getElementById("overlay");
 
     if (window.innerWidth <= 800) {
-      sidebar.classList.toggle("show");
-      overlay.classList.toggle("active", sidebar.classList.contains("show"));
+      const userSidebar = document.getElementById("userSidebar");
+      userSidebar.classList.remove("open");
+      userSidebar.style.right = "";
+
+      const abierto = sidebar.classList.toggle("show");
+      overlay.classList.toggle("active", abierto);
+      document.body.classList.toggle("no-scroll", abierto);
+      sidebar.style.left = abierto ? "0" : "";
+
+      // Siempre mostrar flecha a la derecha en modo móvil
+      if (toggleIcon) {
+        toggleIcon.className = "ri-arrow-right-double-fill";
+      }
     } else {
-      sidebar.classList.toggle("close");
+      const estaCerrado = sidebar.classList.toggle("close");
+      localStorage.setItem("sidebar-estado", estaCerrado ? "close" : "open");
+
+      // Cambiar ícono según estado solo en escritorio
+      if (toggleIcon) {
+        toggleIcon.className = estaCerrado
+          ? "ri-arrow-right-double-fill"
+          : "ri-arrow-left-double-fill";
+      }
     }
+    actualizarIconoToggleSidebar(); // 🔁 icono después de cada clic
   });
 }
 
-// ========== SIDEBAR USUARIO ==========
+function actualizarIconoToggleSidebar() {
+  const sidebar = document.getElementById("sidebar");
+  const toggleIcon = document.getElementById("toggle-icon");
+
+  if (!toggleIcon) return;
+
+  if (window.innerWidth <= 800) {
+    // Siempre a la derecha en móvil
+    toggleIcon.className = "ri-arrow-right-double-fill";
+  } else {
+    // En escritorio, depende de si el sidebar está cerrado
+    const estaCerrado = sidebar.classList.contains("close");
+    toggleIcon.className = estaCerrado
+      ? "ri-arrow-right-double-fill"
+      : "ri-arrow-left-double-fill";
+  }
+}
+
+// ========== SIDEBAR USUARIO ========== //
 function registrarEventosSidebarUsuario() {
   const avatar = document.querySelector(".user-avatar");
   const configBtn = document.querySelector(".topbar-right .icon-button");
-  const sidebar = document.getElementById("userSidebar");
+  const userSidebar = document.getElementById("userSidebar");
   const overlay = document.getElementById("overlay");
 
   const toggle = () => {
-    const abierto = sidebar.classList.toggle("open");
+    const sidebar = document.getElementById("sidebar");
+    sidebar.classList.remove("show");
+    sidebar.style.left = "";
+
+    const abierto = userSidebar.classList.toggle("open");
     overlay.classList.toggle("active", abierto);
+    document.body.classList.toggle("no-scroll", abierto);
+    userSidebar.style.right = abierto ? "0" : "";
   };
 
   avatar?.addEventListener("click", toggle);
   configBtn?.addEventListener("click", toggle);
 }
 
-// ========== ICONOS LINE A FILL ==========
+// ========== ICONOS LINE A FILL ========== //
 function manejarIconosLineFill() {
-  const iconos = document.querySelectorAll(".icon");
-
-  iconos.forEach((icono) => {
+  document.querySelectorAll(".icon").forEach((icono) => {
     const claseLine = [...icono.classList].find((c) => c.endsWith("-line"));
     if (!claseLine) return;
 
@@ -114,19 +168,16 @@ function manejarIconosLineFill() {
   });
 }
 
-// ========== ESTADO INICIAL ==========
+// ========== ESTADO INICIAL ========== //
 function aplicarEstadosIniciales() {
   const activeItem = document.querySelector("#sidebar li.active");
   if (!activeItem) return;
 
-  const prev = activeItem.previousElementSibling;
-  const next = activeItem.nextElementSibling;
-
-  if (prev) prev.classList.add("before-active");
-  if (next) next.classList.add("after-active");
+  activeItem.previousElementSibling?.classList.add("before-active");
+  activeItem.nextElementSibling?.classList.add("after-active");
 }
 
-// ========== LUCES (TOGGLE) ==========
+// ========== TOGGLE MODO OSCURO ========== //
 function registrarEventoLuces() {
   const footerContent = document.querySelector(".sidebar-footer-content");
   const darkToggle = document.getElementById("darkToggle");
@@ -143,7 +194,6 @@ function registrarEventoLuces() {
 
     const actualizarEstadoLuces = () => {
       const activado = darkToggle.checked;
-
       modoIcono.classList.toggle("ri-lightbulb-line", !activado);
       modoIcono.classList.toggle("ri-lightbulb-fill", activado);
       modoIcono.classList.add("rotar");
@@ -163,7 +213,7 @@ function registrarEventoLuces() {
   }
 }
 
-// ========== RESPONSIVE ==========
+// ========== MODO RESPONSIVE ========== //
 function manejarResponsiveSidebar() {
   const sidebar = document.getElementById("sidebar");
   const userSidebar = document.getElementById("userSidebar");
@@ -171,34 +221,24 @@ function manejarResponsiveSidebar() {
 
   const aplicarModoResponsive = () => {
     const esMovil = window.innerWidth <= 800;
-
     if (esMovil) {
       sidebar.classList.remove("close");
     } else {
       sidebar.classList.remove("show");
       userSidebar.classList.remove("open");
       overlay.classList.remove("active");
+      document.body.classList.remove("no-scroll");
     }
   };
 
   aplicarModoResponsive();
-  window.addEventListener("resize", aplicarModoResponsive);
+  window.addEventListener("resize", () => {
+    aplicarModoResponsive();
+    actualizarIconoToggleSidebar(); // 🔁 icono al cambiar tamaño
+  });
 }
 
-function isInsideScrollable(el) {
-  while (el && el !== document.body) {
-    const overflowY = window.getComputedStyle(el).overflowY;
-    if (
-      (overflowY === "auto" || overflowY === "scroll") &&
-      el.scrollHeight > el.clientHeight
-    ) {
-      return true;
-    }
-    el = el.parentElement;
-  }
-  return false;
-}
-
+// ========== GESTOS DESDE BORDES ========== //
 function registrarGestosSidebars() {
   const sidebar = document.getElementById("sidebar");
   const userSidebar = document.getElementById("userSidebar");
@@ -218,10 +258,16 @@ function registrarGestosSidebars() {
     currentX = startX;
     dragging = true;
 
-    // ⛔ Si el toque comienza dentro de un contenedor con scroll vertical, cancelamos el gesto
-    if (isInsideScrollable(e.target)) {
-      dragging = false;
-      tipo = null;
+    const touchY = e.touches[0].clientY;
+    const target = e.target;
+
+    // 🧠 Si el toque se origina dentro del sidebar y el contenido es scrollable verticalmente
+    if (
+      target.closest("#sidebar")?.scrollHeight >
+      target.closest("#sidebar")?.clientHeight
+    ) {
+      // Marca que estamos tocando dentro de un contenedor con scroll vertical
+      tipo = "scrolling"; // ✋ Bloquea gestos laterales
       return;
     }
 
@@ -242,15 +288,15 @@ function registrarGestosSidebars() {
   });
 
   document.body.addEventListener("touchmove", (e) => {
-    if (!dragging || !tipo) return;
+    if (!dragging || !tipo || tipo === "scrolling") return;
     currentX = e.touches[0].clientX;
     const deltaX = currentX - startX;
     overlay.classList.add("active");
 
     let progreso = Math.abs(deltaX) / maxSidebarWidth;
-    let opacidad = Math.min(0.6 + (progreso - 1) * 0.25, 0.85);
+    let opacidad = Math.min(0.6 + (progreso - 1) * 0.25, 0.85); // Aumenta hasta 0.85
     if (progreso < 1) {
-      opacidad = progreso * 0.6;
+      opacidad = progreso * 0.6; // hasta 0.6
     }
     overlay.style.opacity = opacidad.toFixed(2);
 
@@ -280,7 +326,7 @@ function registrarGestosSidebars() {
   });
 
   document.body.addEventListener("touchend", () => {
-    if (!dragging || !tipo) return;
+    if (!dragging || !tipo || tipo === "scrolling") return;
     const deltaX = currentX - startX;
     dragging = false;
 
@@ -289,6 +335,7 @@ function registrarGestosSidebars() {
     overlay.style.opacity = "";
 
     if (tipo === "left" && deltaX > umbral) {
+      // Cerrar userSidebar si está abierto
       userSidebar.classList.remove("open");
       userSidebar.style.right = "";
 
@@ -297,6 +344,7 @@ function registrarGestosSidebars() {
       overlay.classList.add("active");
       document.body.classList.add("no-scroll");
     } else if (tipo === "right" && deltaX < -umbral) {
+      // Cerrar sidebar si está abierto
       sidebar.classList.remove("show");
       sidebar.style.left = "";
 
@@ -309,6 +357,7 @@ function registrarGestosSidebars() {
     } else if (tipo === "cerrar-right" && deltaX > umbral) {
       cerrarSidebars();
     } else {
+      // Rebotar suavemente si no se cumplió el umbral
       if (tipo.startsWith("cerrar")) {
         if (tipo === "cerrar-left") {
           sidebar.style.left = "0";
