@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard</title>
     <link rel="stylesheet" href="style.css" />
-    <script src="dashboard.js" defer></script>
-    <link href="libs/remix/fonts/remixicon.css" rel="stylesheet" />
     <script>
-  if (localStorage.getItem("sidebar-estado") === "close") {
-    document.documentElement.classList.add("sidebar-cerrado");
-  }
-</script>
+      if (localStorage.getItem("sidebar-estado") === "close") {
+        document.documentElement.classList.add("sidebar-cerrado");
+      }
+    </script>
+    
+    <link href="libs/remix/fonts/remixicon.css" rel="stylesheet" />
   </head>
   <body>
     <!-- Sidebar principal -->
@@ -197,5 +197,6 @@
 
     <!-- Overlay reutilizable -->
     <div class="overlay" id="overlay"></div>
+    <script src="dashboard.js" defer></script>
   </body>
 </html>

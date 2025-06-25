@@ -46,6 +46,7 @@ body.no-scroll {
 ========================================= */
 #sidebar {
   height: 100vh;
+  height: 100dvh;
   width: 250px;
   background-color: var(--sidebar);
   position: sticky;
