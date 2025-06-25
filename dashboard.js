@@ -291,6 +291,8 @@ function registrarGestosSidebars() {
     if (!dragging || !tipo || tipo === "scrolling") return;
     currentX = e.touches[0].clientX;
     const deltaX = currentX - startX;
+
+    /*
     overlay.classList.add("active");
 
     let progreso = Math.abs(deltaX) / maxSidebarWidth;
@@ -298,7 +300,7 @@ function registrarGestosSidebars() {
     if (progreso < 1) {
       opacidad = progreso * 0.6; // hasta 0.6
     }
-    overlay.style.opacity = opacidad.toFixed(2);
+    overlay.style.opacity = opacidad.toFixed(2);*/
 
     if (tipo === "left") {
       const pos = Math.min(
