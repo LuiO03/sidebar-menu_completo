@@ -371,8 +371,11 @@ function registrarGestosSidebars() {
           userSidebar.style.right = "0";
         }
       } else {
-        sidebar.style.left = "";
-        userSidebar.style.right = "";
+        if (tipo === "left") {
+          sidebar.style.left = "";
+        } else if (tipo === "right") {
+          userSidebar.style.right = "";
+        }
       }
 
       if (
