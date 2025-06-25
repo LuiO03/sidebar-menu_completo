@@ -425,7 +425,7 @@ body.no-scroll {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, 0.8);
   opacity: 0;
   transition: opacity 0.3s ease;
   display: none;
@@ -611,10 +611,11 @@ main p {
   #sidebar {
     position: fixed;
     top: 0;
-    left: -260px;
+    left: -360px;
     z-index: 1000;
     transition: left 0.3s ease-in-out;
     border-right: 1px solid var(--line-clr);
+    width: 300px;
   }
 
   #userSidebar {
