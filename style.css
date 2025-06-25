@@ -1,7 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Poppins:wght@400;500;600;700&display=swap');
+
 /* =========================================
    VARIABLES
 ========================================= */
 :root {
+  --poppins: 'Poppins', sans-serif;
+	--lato: 'Lato', sans-serif;
   --base-clr: #111111;
   --sidebar: #181818;
   --line-clr: #42434a;
@@ -51,6 +55,18 @@ body.no-scroll {
   flex-direction: column;
   text-wrap: nowrap;
   transition: width 300ms ease-in-out;
+  font-family: var(--lato);
+}
+
+.sidebar-cerrado #sidebar {
+  width: 60px;
+  padding: 0;
+}
+
+.sidebar-cerrado #sidebar .sidebar-logo-texto,
+.sidebar-cerrado #sidebar .sidebar-menu span,
+.sidebar-cerrado #sidebar .sidebar-footer .sidebar-footer-texto{
+  opacity: 0;
 }
 
 #sidebar.close {
@@ -62,13 +78,14 @@ body.no-scroll {
   display: flex;
   align-items: center;
   gap: 15px;
-  justify-content: center;
+  justify-content: start;
+  padding-left: 20px;
   height: 100px;
 }
 
 #sidebar.close .sidebar-header {
   justify-content: space-between;
-  padding-left: 15px;
+  
 }
 
 .sidebar-footer {
@@ -97,7 +114,7 @@ body.no-scroll {
 }
 
 .sidebar-header .sidebar-logo {
-  width: 30px;
+  width: 20px;
   object-fit: 1/1;
 }
 
@@ -265,6 +282,7 @@ body.no-scroll {
 #sidebar li.active {
   background-color: var(--base-clr);
   border-radius: 60px 0 0 60px;
+  font-weight: 700;
 }
 
 #sidebar li.active a {
@@ -404,7 +422,7 @@ body.no-scroll {
   background: none;
   border: none;
   color: var(--text-clr);
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   cursor: pointer;
   padding: 0.3em;
   border-radius: 0.5em;
@@ -452,6 +470,7 @@ body.no-scroll {
   padding: 0 10px;
   height: 60px;
   background-color: var(--sidebar);
+  font-family: var(--lato);
 }
 
 .topbar-left,
@@ -477,6 +496,7 @@ body.no-scroll {
    MAIN
 ========================================= */
 main {
+  font-family: var(--poppins);
   padding: 20px;
   width: 100%;
   height: 100%;
@@ -506,6 +526,7 @@ main p {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  font-family: var(--lato);
 }
 
 .user-sidebar.open {
@@ -521,8 +542,7 @@ main p {
 }
 
 .user-avatar-large {
-  width: 80px;
-  height: 80px;
+  width: 100px;
   object-fit: cover;
   border-radius: 50%;
   border: 2px solid var(--accent-clr);

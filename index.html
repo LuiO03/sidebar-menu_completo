@@ -5,14 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard</title>
     <link rel="stylesheet" href="style.css" />
-    <link href="libs/remix/fonts/remixicon.css" rel="stylesheet" />
     <script src="dashboard.js" defer></script>
+    <link href="libs/remix/fonts/remixicon.css" rel="stylesheet" />
+    <script>
+  if (localStorage.getItem("sidebar-estado") === "close") {
+    document.documentElement.classList.add("sidebar-cerrado");
+  }
+</script>
   </head>
-
-
   <body>
     <!-- Sidebar principal -->
     <nav id="sidebar">
+      
       <div class="sidebar-header">
         <img class="sidebar-logo" src="logo.png" alt="logo del proyecto" />
         <p class="sidebar-logo-texto"><strong>Gecko</strong><span>merce</span></p>
@@ -107,7 +111,6 @@
           </a>
         </li>
       </ul>
-
       <div class="sidebar-footer">
         <div href="#" data-label="Prender Luces" class="sidebar-footer-content">
           <i id="modoIcono" class="ri-lightbulb-line icon icon-animado"></i>
@@ -140,8 +143,8 @@
             alt="Avatar"
             class="user-avatar"
           />
-          <button class="icon-button"">
-            <i class="ri-menu-5-line"></i>
+          <button class="icon-button">
+            <i class="ri-expand-up-down-line"></i>
           </button>
         </div>
       </header>

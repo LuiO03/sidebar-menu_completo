@@ -84,18 +84,25 @@ function registrarEventosSidebarPrincipal() {
       }
     } else {
       const estaCerrado = sidebar.classList.toggle("close");
+
+      // Actualizar clase en <html>
+      document.documentElement.classList.toggle("sidebar-cerrado", estaCerrado);
+
+      // Guardar estado en localStorage
       localStorage.setItem("sidebar-estado", estaCerrado ? "close" : "open");
 
-      // Cambiar ícono según estado solo en escritorio
+      // Cambiar ícono según estado
       if (toggleIcon) {
         toggleIcon.className = estaCerrado
           ? "ri-arrow-right-double-fill"
           : "ri-arrow-left-double-fill";
       }
     }
+
     actualizarIconoToggleSidebar(); // 🔁 icono después de cada clic
   });
 }
+
 
 function actualizarIconoToggleSidebar() {
   const sidebar = document.getElementById("sidebar");
@@ -170,11 +177,22 @@ function manejarIconosLineFill() {
 
 // ========== ESTADO INICIAL ========== //
 function aplicarEstadosIniciales() {
-  const activeItem = document.querySelector("#sidebar li.active");
-  if (!activeItem) return;
+  const sidebar = document.getElementById("sidebar");
 
-  activeItem.previousElementSibling?.classList.add("before-active");
-  activeItem.nextElementSibling?.classList.add("after-active");
+  // Restaurar estado del sidebar
+  const estado = localStorage.getItem("sidebar-estado");
+  if (estado === "close") {
+    sidebar.classList.add("close");
+  } else {
+    sidebar.classList.remove("close");
+  }
+
+  // Aplicar clases para destacar el ítem activo
+  const activeItem = sidebar.querySelector("li.active");
+  if (activeItem) {
+    activeItem.previousElementSibling?.classList.add("before-active");
+    activeItem.nextElementSibling?.classList.add("after-active");
+  }
 }
 
 // ========== TOGGLE MODO OSCURO ========== //
