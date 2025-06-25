@@ -611,15 +611,16 @@ main p {
   #sidebar {
     position: fixed;
     top: 0;
-    left: -360px;
-    z-index: 1000;
+    left: -260px;
+    z-index: 10;
     transition: left 0.3s ease-in-out;
     border-right: 1px solid var(--line-clr);
-    width: 300px;
+    width: 260px;
   }
 
   #userSidebar {
     border-left: 1px solid var(--line-clr);
+    width: 260px;
   }
 
   #sidebar.show {

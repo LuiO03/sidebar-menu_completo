@@ -260,8 +260,12 @@ function registrarGestosSidebars() {
 
     const touchY = e.touches[0].clientY;
     const target = e.target;
+    const scrollable = target.closest(".sidebar-menu"); // Asegúrate de usar el selector correcto
 
-    // 🧠 Si el toque se origina dentro del sidebar y el contenido es scrollable verticalmente
+    if (scrollable && scrollable.scrollHeight > scrollable.clientHeight) {
+      tipo = "scrolling"; // Bloquea gestos si el contenido tiene scroll vertical
+      return;
+    }
     if (
       target.closest("#sidebar")?.scrollHeight >
       target.closest("#sidebar")?.clientHeight
