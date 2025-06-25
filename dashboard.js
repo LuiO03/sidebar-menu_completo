@@ -200,7 +200,7 @@ function registrarGestosSidebars() {
   const overlay = document.getElementById("overlay");
   const maxSidebarWidth = 250;
   const umbral = 60;
-  const bordeActivacion = 80;
+  const bordeActivacion = 60;
 
   let startX = null;
   let currentX = null;
@@ -212,7 +212,6 @@ function registrarGestosSidebars() {
     startX = e.touches[0].clientX;
     currentX = startX;
     dragging = true;
-    
 
     if (sidebar.classList.contains("show") && startX < maxSidebarWidth) {
       tipo = "cerrar-left";
@@ -234,22 +233,37 @@ function registrarGestosSidebars() {
     if (!dragging || !tipo) return;
     currentX = e.touches[0].clientX;
     const deltaX = currentX - startX;
-    const progreso = Math.min(Math.abs(deltaX) / maxSidebarWidth, 1);
     overlay.classList.add("active");
-    overlay.style.opacity = progreso * 0.6;
+
+    let progreso = Math.abs(deltaX) / maxSidebarWidth;
+    let opacidad = Math.min(0.6 + (progreso - 1) * 0.25, 0.85); // Aumenta hasta 0.85
+    if (progreso < 1) {
+      opacidad = progreso * 0.6; // hasta 0.6
+    }
+    overlay.style.opacity = opacidad.toFixed(2);
 
     if (tipo === "left") {
+      const pos = Math.min(
+        Math.max(-maxSidebarWidth + deltaX, -maxSidebarWidth),
+        0
+      );
       sidebar.style.transition = "none";
-      sidebar.style.left = `${Math.min(-maxSidebarWidth + deltaX, 0)}px`;
+      sidebar.style.left = `${pos}px`;
     } else if (tipo === "right") {
+      const pos = Math.min(
+        Math.max(-maxSidebarWidth - deltaX, -maxSidebarWidth),
+        0
+      );
       userSidebar.style.transition = "none";
-      userSidebar.style.right = `${Math.min(-maxSidebarWidth - deltaX, 0)}px`;
+      userSidebar.style.right = `${pos}px`;
     } else if (tipo === "cerrar-left") {
+      const pos = Math.min(Math.max(deltaX, -maxSidebarWidth), 0);
       sidebar.style.transition = "none";
-      sidebar.style.left = `${Math.max(0 + deltaX, -maxSidebarWidth)}px`;
+      sidebar.style.left = `${pos}px`;
     } else if (tipo === "cerrar-right") {
+      const pos = Math.min(Math.max(-deltaX, -maxSidebarWidth), 0);
       userSidebar.style.transition = "none";
-      userSidebar.style.right = `${Math.max(0 - deltaX, -maxSidebarWidth)}px`;
+      userSidebar.style.right = `${pos}px`;
     }
   });
 
@@ -258,8 +272,8 @@ function registrarGestosSidebars() {
     const deltaX = currentX - startX;
     dragging = false;
 
-    sidebar.style.transition = "";
-    userSidebar.style.transition = "";
+    sidebar.style.transition = "left 0.2s ease";
+    userSidebar.style.transition = "right 0.2s ease";
     overlay.style.opacity = "";
 
     if (tipo === "left" && deltaX > umbral) {
@@ -277,16 +291,24 @@ function registrarGestosSidebars() {
     } else if (tipo === "cerrar-right" && deltaX > umbral) {
       cerrarSidebars();
     } else {
+      // Rebotar suavemente si no se cumplió el umbral
+      if (tipo.startsWith("cerrar")) {
+        if (tipo === "cerrar-left") {
+          sidebar.style.left = "0";
+        } else if (tipo === "cerrar-right") {
+          userSidebar.style.right = "0";
+        }
+      } else {
+        sidebar.style.left = "";
+        userSidebar.style.right = "";
+      }
+
       if (
         !sidebar.classList.contains("show") &&
         !userSidebar.classList.contains("open")
       ) {
         overlay.classList.remove("active");
       }
-      sidebar.style.left = sidebar.classList.contains("show") ? "0" : "";
-      userSidebar.style.right = userSidebar.classList.contains("open")
-        ? "0"
-        : "";
     }
 
     tipo = null;
